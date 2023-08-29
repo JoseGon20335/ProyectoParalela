@@ -8,6 +8,11 @@ Correr el archivo sh:
 - sh ejecutarParalelo.sh
 - sh ejecutarSecuencial.sh
 
+## Resultado
+![paralelo](https://github.com/JoseGon20335/ProyectoParalela/assets/100246655/6025850c-2fe0-4369-8446-3db328d93f66)
+
+![secuencial](https://github.com/JoseGon20335/ProyectoParalela/assets/100246655/d52d83a0-4582-4983-b829-dd27a3e2157a)
+
 ## Comando:
 Estos intrucciones son las que se ejecutan en el archivo .sh
 g++ -c Particle.cpp -o Particle.o
