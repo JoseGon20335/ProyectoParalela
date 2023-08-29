@@ -1,5 +1,5 @@
-g++ -c main.cpp -o main.o
 g++ -c Particle.cpp -o Particle.o
+g++ -c secuencial.cpp -o secuencial.o -lGL -lglut
+g++ -o secuencial secuencial.o Particle.o -lGL -lglut
 
-g++ -o secuencial secuencial.cpp -fopenmp -lGL -lglut
-./secuencial 10
+./secuencial 100
