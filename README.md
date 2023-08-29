@@ -1,7 +1,7 @@
 # README
 ## Integrantes:
 Jose Miguel Gonzalez - 20335
-Luis Diego Santos - -----
+Luis Diego Santos - 20226
 
 ## Intrucciones:
 Correr el archivo sh:
