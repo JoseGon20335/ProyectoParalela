@@ -4,8 +4,6 @@
 #include <vector>
 #include <random>
 #include <chrono>
-#include <random>
-#include <omp.h>
 #include "Particle.h"
 
 const int WINDOW_WIDTH = 1920;
@@ -19,39 +17,36 @@ int frameCount = 0;
 float framesPerSecond = 0.0f;
 
 int numParticlesToGenerate = 0;
-bool generationCompleted = false;
 
 void GenerateParticle() {
     std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
-    #pragma omp parallel
-    {
-        std::random_device rd;
-        std::mt19937 generator(rd());
+    std::random_device rd;
+    std::mt19937 generator(rd());
 
-        std::uniform_real_distribution<float> randomRadius(20.0f, PARTICLE_RADIUS);
-        std::uniform_real_distribution<float> randomFloatX(-WINDOW_WIDTH / 2 + PARTICLE_RADIUS, WINDOW_WIDTH / 2 - PARTICLE_RADIUS);
-        std::uniform_real_distribution<float> randomFloatY(-WINDOW_HEIGHT / 2 + PARTICLE_RADIUS, WINDOW_HEIGHT / 2 - PARTICLE_RADIUS);
-        std::uniform_real_distribution<float> randomVelocity(-10.0f, 10.0f);
-        std::uniform_real_distribution<float> randomColor(0.0f, 1.0f);
+    std::uniform_real_distribution<float> randomRadius(20.0f, PARTICLE_RADIUS);
+    std::uniform_real_distribution<float> randomFloatX(-WINDOW_WIDTH / 2 + PARTICLE_RADIUS, WINDOW_WIDTH / 2 - PARTICLE_RADIUS);
+    std::uniform_real_distribution<float> randomFloatY(-WINDOW_HEIGHT / 2 + PARTICLE_RADIUS, WINDOW_HEIGHT / 2 - PARTICLE_RADIUS);
+    std::uniform_real_distribution<float> randomVelocity(-10.0f, 10.0f);
+    std::uniform_real_distribution<float> randomColor(0.0f, 1.0f);
 
-        #pragma omp for
-        for (int i = 0; i < numParticlesToGenerate; i++) {
-            float radius = randomRadius(generator);
-            float vx = randomVelocity(generator);
-            float vy = randomVelocity(generator);
-            float x = randomFloatX(generator);
-            float y = randomFloatY(generator);
-            float r = randomColor(generator);
-            float g = randomColor(generator);
-            float b = randomColor(generator);
+    particleCollection.reserve(numParticlesToGenerate); // Reserve space for particles
 
-            particleCollection[i] = Particle(vx, vy, x, y, r, g, b, 0.0f, radius);
-        }
-    } 
+    for (int i = 0; i < numParticlesToGenerate; i++) {
+        float radius = randomRadius(generator);
+        float vx = randomVelocity(generator);
+        float vy = randomVelocity(generator);
+        float x = randomFloatX(generator);
+        float y = randomFloatY(generator);
+        float r = randomColor(generator);
+        float g = randomColor(generator);
+        float b = randomColor(generator);
+
+        particleCollection.emplace_back(vx, vy, x, y, r, g, b, 0.0f, radius); // Use emplace_back to avoid extra copies
+    }
 
     std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> totalTime = std::chrono::duration_cast<std::chrono::duration<double>>(endTime - startTime);
+    std::chrono::duration<double> totalTime = endTime - startTime;
     std::cout << "Particle generation time: " << totalTime.count() << " seconds\n";
 }
 
@@ -84,32 +79,6 @@ void RenderParticles() {
             float angle = j * 2.0f * M_PI / numSegments;
             float dx = particleCollection[i].radius * std::cos(angle);
             float dy = particleCollection[i].radius * std::sin(angle);
-            glVertex2f(particleCollection[i].posX + dx, particleCollection[i].posY + dy);
-        }
-        glEnd();
-
-        // Draw a smaller black circle
-        glColor3f(0.0f, 0.0f, 0.0f);
-        glBegin(GL_TRIANGLE_FAN);
-        glVertex2f(particleCollection[i].posX, particleCollection[i].posY);
-        const int numSegments2 = 32;
-        for (int j = 0; j <= numSegments2; j++) {
-            float angle = j * 2.0f * M_PI / numSegments2;
-            float dx = particleCollection[i].radius/2 * std::cos(angle);
-            float dy = particleCollection[i].radius/2 * std::sin(angle);
-            glVertex2f(particleCollection[i].posX + dx, particleCollection[i].posY + dy);
-        }
-        glEnd();
-
-        // Draw a smaller colored circle inside the black circle
-        glColor3f((particleCollection[i].redColor)/2, (particleCollection[i].greenColor)/2, (particleCollection[i].blueColor)/2);
-        glBegin(GL_TRIANGLE_FAN);
-        glVertex2f(particleCollection[i].posX, particleCollection[i].posY);
-        const int numSegments3 = 64;
-        for (int j = 0; j <= numSegments3; j++) {
-            float angle = j * 2.0f * M_PI / numSegments3;
-            float dx = particleCollection[i].radius/4 * std::cos(angle);
-            float dy = particleCollection[i].radius/4 * std::sin(angle);
             glVertex2f(particleCollection[i].posX + dx, particleCollection[i].posY + dy);
         }
         glEnd();
@@ -150,12 +119,10 @@ int main(int argc, char** argv) {
     previousFrameTime = std::chrono::high_resolution_clock::now();
     numParticlesToGenerate = std::atoi(argv[1]);
 
-    particleCollection.reserve(numParticlesToGenerate);
-
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    glutCreateWindow("Parallel Project");
+    glutCreateWindow("Sequential Project");
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

@@ -12,6 +12,8 @@ struct Particle {
     float colorChange;
     float radius;
 
+    Particle() = default;
+
     Particle(float vx, float vy, float x, float y, float r, float g, float b, float ch, float rad);
 };
 
