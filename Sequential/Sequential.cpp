@@ -6,17 +6,16 @@
 #include <chrono>
 #include "../Particle/Particle.h"
 
-const int WINDOW_WIDTH = 1920;
-const int WINDOW_HEIGHT = 1080;
-const float PARTICLE_RADIUS = 60.0f;
+int WINDOW_WIDTH = 1920;
+int WINDOW_HEIGHT = 1080;
+float PARTICLE_RADIUS = 60.0f;
+int numParticlesToGenerate = 0;
 
 std::vector<Particle> particleCollection;
 
 std::chrono::high_resolution_clock::time_point previousFrameTime;
 int frameCount = 0;
 float framesPerSecond = 0.0f;
-
-int numParticlesToGenerate = 0;
 
 void GenerateParticle() {
     std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
@@ -112,12 +111,40 @@ void UpdateParticles(int value) {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " numParticles\n";
+    if (argc != 5) {
+        std::cout << "Usage: " << argv[0] << " <num_particles> <window_width> <window_height> <particle_radius>\n";
         return 1;
     }
     previousFrameTime = std::chrono::high_resolution_clock::now();
+
+    // Validate that argv[1] is a number between 1 and 100
+    if (std::atoi(argv[1]) < 1 || std::atoi(argv[1]) > 100) {
+        std::cout << "Error: <num_particles> must be between 1 and 100\n";
+        return 1;
+    }
+
+    // Validate that argv[2] is a number between 1 and 1920
+    if (std::atoi(argv[2]) < 1 || std::atoi(argv[2]) > 1920) {
+        std::cout << "Error: <window_width> must be between 1 and 1920\n";
+        return 1;
+    }
+
+    // Validate that argv[3] is a number between 1 and 1080
+    if (std::atoi(argv[3]) < 1 || std::atoi(argv[3]) > 1080) {
+        std::cout << "Error: <window_height> must be between 1 and 1080\n";
+        return 1;
+    }
+
+    // Validate that argv[4] is a number between 1 and 100
+    if (std::atoi(argv[4]) < 1 || std::atoi(argv[4]) > 100) {
+        std::cout << "Error: <particle_radius> must be between 1 and 100\n";
+        return 1;
+    }
+
     numParticlesToGenerate = std::atoi(argv[1]);
+    WINDOW_WIDTH = std::atoi(argv[2]);
+    WINDOW_HEIGHT = std::atoi(argv[3]);
+    PARTICLE_RADIUS = std::atoi(argv[4]);
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
