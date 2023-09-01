@@ -1,5 +1,5 @@
-g++ -c Particle.cpp -o Particle.o
-g++ -c paralelo.cpp -o paralelo.o -fopenmp -lGL -lglut
-g++ -o paralelo paralelo.o Particle.o -fopenmp -lGL -lglut
+g++ -c ./Particle/Particle.cpp -o ./Particle/Particle.o
+g++ -c ./Parallel/Parallel.cpp -o ./Parallel/Parallel.o -fopenmp -lGL -lglut
+g++ -o ./Parallel/Parallel ./Parallel/Parallel.o ./Particle/Particle.o -fopenmp -lGL -lglut
 
-./paralelo 100
+./Parallel/Parallel 100

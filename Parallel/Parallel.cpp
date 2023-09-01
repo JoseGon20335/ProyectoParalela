@@ -4,7 +4,7 @@
 #include <vector>
 #include <random>
 #include <chrono>
-#include "Particle.h"
+#include "../Particle/Particle.h"
 #include <omp.h> // Include OpenMP header
 
 const int WINDOW_WIDTH = 1920;
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    glutCreateWindow("Sequential Project");
+    glutCreateWindow("Paralel Project");
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

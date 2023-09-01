@@ -1,5 +1,5 @@
-g++ -c Particle.cpp -o Particle.o
-g++ -c secuencial.cpp -o secuencial.o -lGL -lglut
-g++ -o secuencial secuencial.o Particle.o -lGL -lglut
+g++ -c ./Particle/Particle.cpp -o ./Particle/Particle.o
+g++ -c ./Sequential/Sequential.cpp -o ./Sequential/Sequential.o -lGL -lglut
+g++ -o ./Sequential/Sequential ./Sequential/Sequential.o ./Particle/Particle.o -lGL -lglut
 
-./secuencial 100
+./Sequential/Sequential 100

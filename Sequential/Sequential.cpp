@@ -4,7 +4,7 @@
 #include <vector>
 #include <random>
 #include <chrono>
-#include "Particle.h"
+#include "../Particle/Particle.h"
 
 const int WINDOW_WIDTH = 1920;
 const int WINDOW_HEIGHT = 1080;
