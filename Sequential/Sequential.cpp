@@ -118,7 +118,7 @@ int main(int argc, char** argv) {
     previousFrameTime = std::chrono::high_resolution_clock::now();
 
     // Validate that argv[1] is a number between 1 and 100
-    if (std::atoi(argv[1]) < 1 || std::atoi(argv[1]) > 100) {
+    if (std::atoi(argv[1]) < 1 || std::atoi(argv[1]) > 10000) {
         std::cout << "Error: <num_particles> must be between 1 and 100\n";
         return 1;
     }

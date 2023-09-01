@@ -32,8 +32,7 @@ void GenerateParticle() {
 
     particleCollection.resize(numParticlesToGenerate); // Resize particle vector
 
-    // Parallelize particle generation loop
-    #pragma omp parallel for
+    # pragma omp parallel for shared(particleCollection, numParticlesToGenerate)
     for (int i = 0; i < numParticlesToGenerate; i++) {
         float radius = randomRadius(generator);
         float vx = randomVelocity(generator);
@@ -72,7 +71,6 @@ void RenderParticles() {
     }
 
     for (size_t i = 0; i < numParticlesToGenerate; i++) {
-        // Draw the outer circle
         glColor3f(particleCollection[i].redColor, particleCollection[i].greenColor, particleCollection[i].blueColor);
         glBegin(GL_TRIANGLE_FAN);
         glVertex2f(particleCollection[i].posX, particleCollection[i].posY);
@@ -93,6 +91,7 @@ void UpdateParticles(int value) {
     std::chrono::high_resolution_clock::time_point currentFrameTime = std::chrono::high_resolution_clock::now();
     float deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentFrameTime - previousFrameTime).count() / 1000.0f;
 
+    # pragma omp parallel for private(deltaTime) shared(particleCollection) schedule(dynamic)
     for (size_t i = 0; i < numParticlesToGenerate; i++) {
         particleCollection[i].posX += particleCollection[i].velocityX;
         particleCollection[i].posY += particleCollection[i].velocityY;
@@ -121,7 +120,7 @@ int main(int argc, char** argv) {
     previousFrameTime = std::chrono::high_resolution_clock::now();
 
     // Validate that argv[1] is a number between 1 and 100
-    if (std::atoi(argv[1]) < 1 || std::atoi(argv[1]) > 100) {
+    if (std::atoi(argv[1]) < 1 || std::atoi(argv[1]) > 10000) {
         std::cout << "Error: <num_particles> must be between 1 and 100\n";
         return 1;
     }
